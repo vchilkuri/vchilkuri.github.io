@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ccNetViz complex graphs example</title>
+  <style type="text/css">
+    #container {
+      width: 500px;
+      height: 500px;
+    }
+
+    #body {
+      display: inline-block;
+    }
+
+    #info {
+/*      float: right;*/
+    }
+  </style>
+  <script src="./libs/jquery.min.js"></script>
+  <script src="../dist/ccNetViz.js"></script>
+</head>
+<body>
+  <h1>Edges to edges example</h1>
+  <div id='body'>
+  <canvas id="container"></canvas>
+  </div>
+  <div id='report'>
+    <h2>Generated configuration object for graph:</h2>
+    <div id='searchReport' />
+  </div>
+  <script>
+
+  $(function(){
+    var el = document.getElementById('container');
+    var graph = new ccNetViz(el, {
+      styles: {
+        undirected: true,
+        node: { texture: "images/node_bw.png", label: { hideSize: 16 } },
+        edge: {  },
+        edgeHover: {
+          color: "rgb(0, 0, 255)"
+        },
+        nodeHover: {
+	  texture: "images/node.png", label: { hideSize: 16 }
+	}
+      }
+    });
+    var nodes = [
+      { label: "Hello" },
+      { label: "World" },
+      { label: "!" }
+    ];
+
+    var e = { source: nodes[0], target: nodes[1] };
+    var e2 = { source: nodes[1], target: nodes[0] };
+    var e3 = { source: nodes[1], target: nodes[2] };
+    var e4 = { source: nodes[0], target: nodes[0] };
+
+    var edges = [
+      e,
+      e2,
+      e3,
+      e4,
+      { source: nodes[2], target: e2 },
+      { source: nodes[0], target: e3 },
+      { source: e2, target: nodes[2] },
+      { source: nodes[2], target: e4 },
+      { source: e2, target: e2 },
+      { source: e3, target: e3 },
+      { source: e4, target: e4 }
+    ];
+
+    graph.set(nodes, edges, "force");
+    graph.draw();
+
+
+
+  });
+
+
+  </script>
+
+  <!--code for generation of code -->
+  <div>
+      <div id="source_code" class="default">
+          <script>
+              var scripts = document.getElementsByTagName('SCRIPT');
+              var lastScript = scripts[scripts.length - 2];
+              var content = (lastScript.innerText || lastScript.textContent);
+              document.writeln('<div>');
+              document.writeln('<pre>'+content+'</pre>');
+              document.writeln('<a href="javascript:void(0);" class="show_hide_link">SHOW COMPLETE CODE</a>');
+              document.writeln('</div>');
+              $( ".show_hide_link" ).click(function() {
+                  $( ".show_hide_link" ).toggleClass('open');
+                  $( "#source_code" ).toggleClass('expanded');
+
+                  $('.show_hide_link').html($('.show_hide_link').text() == 'SHOW COMPLETE CODE' ? 'HIDE CODE' : 'SHOW COMPLETE CODE');
+              });
+          </script>
+      </div>
+  </div>
+
+  <style type="text/css">
+    .show_hide_link{
+        text-decoration: none;
+        padding-left: 22px;
+        font-weight: normal;
+        display: block;
+        font-family: monospace;
+        white-space: pre;
+        margin: 1em 0px;
+        color:black;
+    }
+    .show_hide_link.open::before{
+        content:"- ";
+    }
+    .show_hide_link::before{
+        content:"+ ";
+        font-size: 18px;
+    }
+    #source_code div{
+        background-color: ghostwhite;
+        border: 1px solid silver;
+        padding: 10px 20px;
+        margin: 20px;
+    }
+    #source_code div pre{
+        height: 90px;
+        overflow: hidden;
+    }
+    .expanded div pre{
+        height: auto!important;
+        overflow-x: scroll!important;
+    }
+  </style>
+  <!--generated code ends-->
+</body>
+</html>

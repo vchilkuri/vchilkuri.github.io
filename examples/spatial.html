@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ccNetViz example of different styling</title>
+  <link rel="stylesheet" type="text/css" href="css/spectrum.css">
+  <style type="text/css">
+    #container {
+      width: 600px;
+      height: 600px;
+      border: 1px solid black;
+      cursor: crosshair;
+    }
+
+    #body {
+      display: inline-block;
+    }
+  </style>
+  <script src="./libs/jquery.min.js"></script>
+  <script src="../dist/ccNetViz.js"></script>
+</head>
+<body>
+  <h1>Using Spatial search</h1>
+  <br />
+  <div id='body'>
+    <canvas id="container"></canvas>
+  </div>
+  <div id='report'>
+    <h2>Generated configuration object for graph:</h2>
+    <div id='searchReport' />
+  </div>
+
+  <script>
+
+    var data = {};
+
+    function init(){
+	$.ajax({url: 'data/graph-10-2.json', dataType: 'json'}).done(dataLoaded);
+    };
+
+    function dataLoaded(d){
+	data = d;
+	showGraph();
+    }
+
+
+    function showGraph(){
+      var startTime = new Date();
+
+      var conf = {
+        styles: {
+            background: {
+                color: "rgb(255, 255, 255)"
+            },
+            node: {
+        	    minSize: 8,   //minimum size of node representation in pixels, default: 6
+        	    maxSize: 16,    //maximum size of node representation in pixels, default: 16
+        	    color: "rgb(255, 0, 0)",  //node color (combined with node image), default: "rgb(255, 255, 255)"
+        	    texture: "images/circle.png",   //node image
+        	    label: {
+        	      hideSize: 16,
+        	      color: "rgb(120, 0, 0)"  //label color, default: "rgb(120, 120, 120)"
+        	    }
+        	  },
+            edge: {
+                width: 1,
+                color: "rgb(204, 204, 204)",
+                arrow: {
+                    minSize: 6,
+                    maxSize: 16,
+                    aspect: 1,
+                    texture: "images/arrow.png",
+                    hideSize: 1
+                }
+            }
+        }
+      };
+
+      var el = document.getElementById('container');
+      var graph = new ccNetViz(el, conf);
+      graph.set(data.nodes, data.edges, "force");
+      graph.draw();
+
+      el.addEventListener('mouseup', function(e){
+        var bb = el.getBoundingClientRect();
+
+        var x = e.clientX - bb.left;
+        var y = e.clientY - bb.top;
+        var radius = 5;
+
+        var x1 = x-radius;
+        var y1 = y-radius;
+        var x2 = x+radius;
+        var y2 = y+radius;
+
+        var lCoords = graph.getLayerCoords({x1:x1, y1:y1, x2:x2, y2:y2});
+        var result = graph.findArea(lCoords.x1, lCoords.y1, lCoords.x2, lCoords.y2, true, true);
+
+        var reportel = document.getElementById("searchReport");
+        reportel.style.display = 'block';
+        var html = "<div>Search for ["+x+","+y+"] px:</div>";
+        html+="<div>Nodes: "+result.nodes.length+"</div>";
+        html+="<div>Edges: "+result.edges.length+"</div>";
+        reportel.innerHTML = html;
+      });
+
+      $('#nodesCnt').text(data.nodes.length);
+      $('#edgesCnt').text(data.edges.length);
+      $('#renderedIn').text(Math.round((new Date().getTime() - startTime.getTime())*10)/10);
+    }
+
+    $(init);
+  </script>
+
+  <!--code for generation of code -->
+  <div>
+      <div id="source_code" class="default">
+          <script>
+              function encodeMyHtml(html) {
+                encodedHtml = escape(html);
+                encodedHtml = encodedHtml.replace(/\//g,"%2F");
+                encodedHtml = encodedHtml.replace(/\?/g,"%3F");
+                encodedHtml = encodedHtml.replace(/=/g,"%3D");
+                encodedHtml = encodedHtml.replace(/&/g,"%26");
+                encodedHtml = encodedHtml.replace(/@/g,"%40");
+                return encodedHtml;
+              }
+              var scripts = document.getElementsByTagName('SCRIPT');
+              var lastScript = scripts[scripts.length - 2];
+              var content = (lastScript.innerText || lastScript.textContent).toString();
+              var content = unescape(encodeMyHtml(content));
+              document.writeln('<div>');
+              document.writeln('<pre>'+content+'</pre>');
+              document.writeln('<a href="javascript:void(0);" class="show_hide_link">SHOW COMPLETE CODE</a>');
+              document.writeln('</div>');
+              $( ".show_hide_link" ).click(function() {
+                  $( ".show_hide_link" ).toggleClass('open');
+                  $( "#source_code" ).toggleClass('expanded');
+
+                  $('.show_hide_link').html($('.show_hide_link').text() == 'SHOW COMPLETE CODE' ? 'HIDE CODE' : 'SHOW COMPLETE CODE');
+              });
+          </script>
+      </div>
+  </div>
+
+  <style type="text/css">
+    .show_hide_link{
+        text-decoration: none;
+        padding-left: 22px;
+        font-weight: normal;
+        display: block;
+        font-family: monospace;
+        white-space: pre;
+        margin: 1em 0px;
+        color:black;
+    }
+    .show_hide_link.open::before{
+        content:"- ";
+    }
+    .show_hide_link::before{
+        content:"+ ";
+        font-size: 18px;
+    }
+    #source_code > div{
+        background-color: ghostwhite;
+        border: 1px solid silver;
+        padding: 10px 20px;
+        margin: 20px;
+    }
+    #source_code > div pre{
+        height: 90px;
+        overflow: hidden;
+    }
+    .expanded div pre{
+        height: auto!important;
+        overflow-x: scroll!important;
+    }
+  </style>
+  <!--generated code ends-->
+</body>
+</html>

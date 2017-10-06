@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ccNetViz example</title>
+  <style type="text/css">
+    #container {
+      width: 500px;
+      height: 500px;
+      cursor: crosshair;
+    }
+  </style>
+  <script src="./libs/jquery.min.js"></script>
+  <script src="./libs/json_prettyprint.js"></script>
+  <script type="text/javascript" src="js/spectrum.js"></script>
+  <script src="../dist/ccNetViz.js"></script>
+</head>
+<body>
+  <h1>Multi level graph example</h1>
+  <div>To enter to deeper node, click on node "Hello" or "World". Then use right button on mouse for going back.</div>
+  <br />
+  <canvas id="container"></canvas>
+    <div id='report'>
+      <h2>Generated configuration object for graph:</h2>
+      <div id='searchReport'>
+    </div>
+  </div>
+  <script>
+    var el = document.getElementById('container');
+    var graph = new ccNetVizMultiLevel(el, {
+      styles: {
+        node: { texture: "images/node.png", label: { hideSize: 16 } },
+        edge: { arrow: { texture: "images/arrow.png" } }
+      }});
+
+
+    var nodes1 = [
+      { label: "Node1 of subgraph1" },
+      { label: "Node2 of subgraph1" },
+    ];
+    var edges1 = [
+      { source: nodes1[0], target: nodes1[1] },
+      { source: nodes1[0], target: nodes1[0] },
+      { source: nodes1[1], target: nodes1[0] },
+    ];
+
+
+    var nodes2 = [
+      { label: "Node1 of subgraph2" },
+      { label: "Node2 of subgraph2" },
+      { label: "Node3 of subgraph2" },
+      { label: "Node4 of subgraph2" },
+      { label: "Node5 of subgraph2" },
+    ];
+    var edges2 = [
+      { source: nodes2[0], target: nodes2[1] },
+      { source: nodes2[0], target: nodes2[0] },
+      { source: nodes2[1], target: nodes2[0] },
+      { source: nodes2[3], target: nodes2[4] },
+    ];
+
+
+    var nodes = [
+      { label: "Hello", nodes: nodes2, edges: edges2 },
+      { label: "World", nodes: nodes1, edges: edges1 },
+      { label: "!" }
+    ];
+    var edges = [
+      { source: nodes[0], target: nodes[1] },
+      { source: nodes[1], target: nodes[0] },
+      { source: nodes[0], target: nodes[0] },
+      { source: nodes[1], target: nodes[2] },
+    ];
+
+    function transformConfig(conf, prefix){
+  prefix = prefix || "";
+  for(var key in conf){
+      if($.isPlainObject(conf[key])){
+    transformConfig(conf[key], prefix+key+"_");
+    continue;
+      }
+
+
+      var c = $("#"+prefix+key);
+      if(c.length > 0){
+    var val = c.val();
+    if(val !== undefined && val != null){
+        if(c.attr('type') === 'number')
+      val = parseFloat(val);
+        conf[key] = val;
+    }
+      }
+  }
+
+    }
+    transformConfig(nodes1);
+    graph.set(nodes, edges, "force");
+    graph.draw();
+
+  </script>
+  <!--code for generation of code -->
+  <div>
+      <div id="source_code" class="default">
+          <script>
+              var scripts = document.getElementsByTagName('SCRIPT');
+              var lastScript = scripts[scripts.length - 2];
+              var content = (lastScript.innerText || lastScript.textContent);
+              document.writeln('<div>');
+              document.writeln('<pre>'+content+'</pre>');
+              document.writeln('<a href="javascript:void(0);" class="show_hide_link">SHOW COMPLETE CODE</a>');
+              document.writeln('</div>');
+              $( ".show_hide_link" ).click(function() {
+                  $( ".show_hide_link" ).toggleClass('open');
+                  $( "#source_code" ).toggleClass('expanded');
+
+                  $('.show_hide_link').html($('.show_hide_link').text() == 'SHOW COMPLETE CODE' ? 'HIDE CODE' : 'SHOW COMPLETE CODE');
+              });
+          </script>
+      </div>
+  </div>
+
+  <style type="text/css">
+    .show_hide_link{
+        text-decoration: none;
+        padding-left: 22px;
+        font-weight: normal;
+        display: block;
+        font-family: monospace;
+        white-space: pre;
+        margin: 1em 0px;
+        color:black;
+    }
+    .show_hide_link.open::before{
+        content:"- ";
+    }
+    .show_hide_link::before{
+        content:"+ ";
+        font-size: 18px;
+    }
+    #source_code div{
+        background-color: ghostwhite;
+        border: 1px solid silver;
+        padding: 10px 20px;
+        margin: 20px;
+    }
+    #source_code div pre{
+        height: 90px;
+        overflow: hidden;
+    }
+    .expanded div pre{
+        height: auto!important;
+        overflow-x: scroll!important;
+    }
+  </style>
+  <!--generated code ends-->
+</body>
+</html>

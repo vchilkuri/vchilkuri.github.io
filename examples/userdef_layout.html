@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ccNetViz user defined layout example</title>
+  <style type="text/css">
+    #container {
+      width: 500px;
+      height: 500px;
+    }
+  </style>
+  <script src="../dist/ccNetViz.js"></script>
+  <script src="./libs/jquery.min.js"></script>
+</head>
+<body>
+  <h1>UserDef layout example</h1>
+  <div>In this example, all nodes are manually positioned with x and y attributes.</div>
+  <br />
+
+  <canvas id="container"></canvas>
+
+    <div id='searchReport' />
+
+  <script>
+    var el = document.getElementById('container');
+    var graph = new ccNetViz(el, {
+      styles: {
+        node: { texture: "images/node.png", label: { hideSize: 16 } },
+        edge: { arrow: { texture: "images/arrow.png" } }
+      }});
+    var nodes = [
+      { label: "Hello", x: 0, y: 1 },
+      { label: "World", x: 1, y: 1  },
+      { label: "!", x: 0.5, y: 0  },
+      { label: "I am in center", x: 0.5, y: 0.5 },
+      { label: "Right bottom corner", x: 1, y: 0 },
+    ];
+    var edges = [
+      { source: nodes[0], target: nodes[1] },
+      { source: nodes[1], target: nodes[0] },
+      { source: nodes[0], target: nodes[0] },
+      { source: nodes[1], target: nodes[2] },
+      { source: nodes[2], target: nodes[4] }
+    ];
+    graph.set(nodes, edges);
+    graph.draw();
+  </script>
+
+  <!--code for generation of code -->
+  <div>
+      <div id="source_code" class="default">
+          <script>
+              var scripts = document.getElementsByTagName('SCRIPT');
+              var lastScript = scripts[scripts.length - 2];
+              var content = (lastScript.innerText || lastScript.textContent);
+              document.writeln('<div>');
+              document.writeln('<pre>'+content+'</pre>');
+              document.writeln('<a href="javascript:void(0);" class="show_hide_link">SHOW COMPLETE CODE</a>');
+              document.writeln('</div>');
+              $( ".show_hide_link" ).click(function() {
+                  $( ".show_hide_link" ).toggleClass('open');
+                  $( "#source_code" ).toggleClass('expanded');
+
+                  $('.show_hide_link').html($('.show_hide_link').text() == 'SHOW COMPLETE CODE' ? 'HIDE CODE' : 'SHOW COMPLETE CODE');
+              });
+          </script>
+      </div>
+  </div>
+
+  <style type="text/css">
+    .show_hide_link{
+        text-decoration: none;
+        padding-left: 22px;
+        font-weight: normal;
+        display: block;
+        font-family: monospace;
+        white-space: pre;
+        margin: 1em 0px;
+        color:black;
+    }
+    .show_hide_link.open::before{
+        content:"- ";
+    }
+    .show_hide_link::before{
+        content:"+ ";
+        font-size: 18px;
+    }
+    #source_code div{
+        background-color: ghostwhite;
+        border: 1px solid silver;
+        padding: 10px 20px;
+        margin: 20px;
+    }
+    #source_code div pre{
+        height: 90px;
+        overflow: hidden;
+    }
+    .expanded div pre{
+        height: auto!important;
+        overflow-x: scroll!important;
+    }
+  </style>
+  <!--generated code ends-->
+</body>
+</html>

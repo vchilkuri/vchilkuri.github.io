@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ccNetViz example of different styling</title>
+  <style type="text/css">
+    #container {
+      width: 600px;
+      height: 600px;
+      border: 1px solid black;
+    }
+
+    #body {
+      display: inline-block;
+    }
+  </style>
+  <script src="./libs/jquery.min.js"></script>
+  <script src="../dist/ccNetViz.js"></script>
+</head>
+<body>
+  <h1>Using SDF font</h1>
+  <div>Example with Signed distance field fonts which is using protocol buffer based SDF atlas format.</div>
+  <div>
+	We have prepared for you several fonts at our <a href='http://helikarlab.github.io/ccNetViz/fonts/'>github io page</a>
+	or you can generate your own pbf file using <a href='https://github.com/saskaale/node-fontnik'>node-fontnik</a> tool.
+  </div>
+  <br />
+  <div id='body'>
+    <canvas id="container"></canvas>
+  </div>
+  <div id='report'>
+    <h2>Generated configuration object for graph:</h2>
+    <div id='searchReport' />
+  </div>
+
+  <script>
+
+    var data = {};
+
+    function init(){
+	$.ajax({url: 'data/graph-10-2.json', dataType: 'json'}).done(dataLoaded);
+    };
+
+    function dataLoaded(d){
+	data = d;
+	showGraph();
+    }
+
+
+    function showGraph(){
+      var startTime = new Date();
+
+      var conf = {
+        styles: {
+            background: {
+                color: "rgb(255, 255, 255)"
+            },
+            node: {
+                minSize: 6,
+                maxSize: 16,
+                color: "rgb(255, 0, 0)",
+                texture: "images/circle.png",
+                label: {
+                    color: "rgb(120, 120, 120)",
+                    size: 14,
+                    font: {
+                        type:    "sdf",
+                        pbf: "https://helikarlab.github.io/ccNetViz/fonts/FineHand/0-65535.pbf",
+                    }
+                }
+            },
+            edge: {
+                width: 1,
+                color: "rgb(204, 204, 204)",
+                arrow: {
+                    minSize: 6,
+                    maxSize: 16,
+                    aspect: 1,
+                    texture: "images/arrow.png",
+                    hideSize: 1
+                }
+            }
+        }
+      };
+
+      var el = document.getElementById('container');
+      var graph = new ccNetViz(el, conf);
+      graph.set(data.nodes, data.edges, "force");
+      graph.draw();
+
+      $('#nodesCnt').text(data.nodes.length);
+      $('#edgesCnt').text(data.edges.length);
+      $('#renderedIn').text(Math.round((new Date().getTime() - startTime.getTime())*10)/10);
+    }
+
+    $(init);
+  </script>
+
+  <!--code for generation of code -->
+  <div>
+      <div id="source_code" class="default">
+          <script>
+              var scripts = document.getElementsByTagName('SCRIPT');
+              var lastScript = scripts[scripts.length - 2];
+              var content = (lastScript.innerText || lastScript.textContent);
+              document.writeln('<div>');
+              document.writeln('<pre>'+content+'</pre>');
+              document.writeln('<a href="javascript:void(0);" class="show_hide_link">SHOW COMPLETE CODE</a>');
+              document.writeln('</div>');
+              $( ".show_hide_link" ).click(function() {
+                  $( ".show_hide_link" ).toggleClass('open');
+                  $( "#source_code" ).toggleClass('expanded');
+
+                  $('.show_hide_link').html($('.show_hide_link').text() == 'SHOW COMPLETE CODE' ? 'HIDE CODE' : 'SHOW COMPLETE CODE');
+              });
+          </script>
+      </div>
+  </div>
+
+  <style type="text/css">
+    .show_hide_link{
+        text-decoration: none;
+        padding-left: 22px;
+        font-weight: normal;
+        display: block;
+        font-family: monospace;
+        white-space: pre;
+        margin: 1em 0px;
+        color:black;
+    }
+    .show_hide_link.open::before{
+        content:"- ";
+    }
+    .show_hide_link::before{
+        content:"+ ";
+        font-size: 18px;
+    }
+    #source_code div{
+        background-color: ghostwhite;
+        border: 1px solid silver;
+        padding: 10px 20px;
+        margin: 20px;
+    }
+    #source_code div pre{
+        height: 90px;
+        overflow: hidden;
+    }
+    .expanded div pre{
+        height: auto!important;
+        overflow-x: scroll!important;
+    }
+  </style>
+  <!--generated code ends-->
+</body>
+</html>
